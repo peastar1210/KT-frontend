@@ -1,56 +1,54 @@
-import { type BaseError, useReadContract } from 'wagmi'
-import { address, abi } from '@/contracts/JobBoard.json'
-import { Accordion, AccordionItem } from '@nextui-org/react'
-import { FaMapLocation, FaDollarSign } from 'react-icons/fa6'
+import { type BaseError, useReadContract } from "wagmi";
+import { address, abi } from "@/contracts/JobBoard.json";
+import { Accordion, AccordionItem } from "@nextui-org/react";
+import { FaMapLocation, FaDollarSign } from "react-icons/fa6";
+import { ReadContractData } from "wagmi/query";
 
-const ApplicationList = ({ jobId }) => {
+const ApplicationList = ({ jobId }: { jobId: any }) => {
   const {
-    data: AppList,
+    data: appList,
     error,
     isPending,
   } = useReadContract({
     abi: abi,
     address: `0x${address}`,
-    functionName: 'getApplications',
+    functionName: "getApplications",
     args: [jobId],
-  })
+  });
 
-  if (isPending) return <div>Loading...</div>
+  if (isPending) return <div>Loading...</div>;
 
-  if (error)
-    return (
-      <div>Error: {(error as BaseError).shortMessage || error.message}</div>
-    )
+  if (error) return <div>Error: {error.message}</div>;
 
-  console.log('AppList:', AppList)
+  console.log("appList:", appList);
 
   return (
     <>
       <Accordion variant="splitted">
-        {AppList.map((Application) => (
+        {(appList as any[]).map((app) => (
           <AccordionItem
-            key={Application.candidate}
-            aria-label={Application.candidate}
-            title={Application.candidate}
+            key={app.candidate}
+            aria-label={app.candidate}
+            title={app.candidate}
             subtitle={
               <span className="flex items-center gap-8">
                 <span className="flex items-center gap-2">
                   <FaMapLocation /> Location:
-                  <strong>{Application.location}</strong>
+                  <strong>{app.location}</strong>
                 </span>
                 <span className="flex items-center gap-2">
                   <FaDollarSign /> Salary:
-                  <strong>Hourly ${Number(Application.salary)}</strong>
+                  <strong>Hourly ${Number(app.salary)}</strong>
                 </span>
               </span>
             }
           >
-            {Application.application}
+            {app.application}
           </AccordionItem>
         ))}
       </Accordion>
     </>
-  )
-}
+  );
+};
 
-export default ApplicationList
+export default ApplicationList;

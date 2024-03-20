@@ -1,9 +1,8 @@
-import { type BaseError, useReadContract, useAccount } from "wagmi";
+import { useReadContract, useAccount } from "wagmi";
+import { ReadContractErrorType } from "wagmi/actions";
 import { formatEther } from "viem";
 import { address, abi } from "@/contracts/MainToken.json";
 import { memo } from "react";
-import { Chip, Badge } from "@nextui-org/react";
-import { FaMoneyBill } from "react-icons/fa";
 
 const TokenStatus = async () => {
   const userAccount = useAccount();
@@ -22,13 +21,16 @@ const TokenStatus = async () => {
 
   if (error)
     return (
-      <div>Error: {(error as BaseError).shortMessage || error.message}</div>
+      <div>
+        Error: {(error as ReadContractErrorType).shortMessage || error.message}
+      </div>
     );
 
   return (
     <>
       <div className="flex">
-        Token Balance:&nbsp;<b>{formatEther(balance?.toString())}&nbsp;MT</b>
+        Token Balance:&nbsp;
+        <b>{formatEther(balance?.toString() as unknown as bigint)}&nbsp;MT</b>
         {/* <div className="relative">
           <Badge content="MT" color="primary">
             ""

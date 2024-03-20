@@ -1,24 +1,17 @@
 "use client";
 
-import Navbar from "@/components/Navbar";
-import JobCard from "@/components/JobCard";
-import { FaMapMarkerAlt } from "react-icons/fa";
-import { FaDesktop } from "react-icons/fa";
-import { FaSearch } from "react-icons/fa";
+import { useState, useEffect } from "react";
 import { Button, Input, Chip } from "@nextui-org/react";
 import {
-  type BaseError,
   useWriteContract,
-  useReadContract,
   useAccount,
   useWaitForTransactionReceipt,
-  useSwitchAccount,
 } from "wagmi";
-import { useState, useEffect } from "react";
+import { parseEther } from "viem";
+
+import Navbar from "@/components/Navbar";
 import { showToast } from "@/helper/ToastNotify";
-import { FaBolt } from "react-icons/fa6";
-import StakingStatus from "@/components/StakingStatus";
-import { abi as MTABI, address as MTAddress } from "@/contracts/MainToken.json";
+import useStakingStatus from "@/hooks/useStakingStatus";
 import {
   abi as RTABI,
   address as RTAddress,
@@ -27,23 +20,10 @@ import {
   abi as stakingABI,
   address as stakingAddress,
 } from "@/contracts/StakingRewards.json";
-import { parseEther, formatEther } from "viem";
-
-type JobType = {
-  id: string;
-  title: string;
-  description: string;
-  qualifications: string;
-  location: string;
-  salary: string;
-  imageURL: string;
-  siteURL: string;
-  applied: boolean;
-};
 
 export default function Admin() {
   const userAccount = useAccount();
-  const { total, stake } = StakingStatus();
+  const { total, stake } = useStakingStatus();
   const { address, isConnected } = userAccount;
   const [tokenAmount, setTokenAmount] = useState<string>("");
   const [duration, setduration] = useState<string>("");

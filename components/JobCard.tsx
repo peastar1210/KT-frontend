@@ -1,28 +1,13 @@
-import { Image, Chip, Badge } from '@nextui-org/react'
-import { FaCheck, FaBolt, FaMap, FaPaypal } from 'react-icons/fa'
-import { FaComment } from 'react-icons/fa6'
-import { useAccount } from 'wagmi'
-
-type JobType = {
-  employer: string
-  id: string
-  title: string
-  description: string
-  qualifications: string
-  location: string
-  salaryFrom: number
-  salaryTo: number
-  siteURL: string
-  applied: boolean
-  timestamp: number
-  applicationCount: number
-}
+import { Image, Chip, Badge } from "@nextui-org/react";
+import { FaCheck, FaBolt, FaMap, FaPaypal } from "react-icons/fa";
+import { FaComment } from "react-icons/fa6";
+import { useAccount } from "wagmi";
 
 type JobCardProps = {
-  currentJob: JobType
-  setSelectedJob: Function
-  className: string
-}
+  currentJob: JobType;
+  setSelectedJob: Function;
+  className: string;
+};
 
 const JobCard: React.FC<JobCardProps> = ({
   currentJob,
@@ -30,25 +15,25 @@ const JobCard: React.FC<JobCardProps> = ({
   className,
 }) => {
   const getTime = () => {
-    const currentTimeInSeconds = Math.floor(Date.now() / 1000)
+    const currentTimeInSeconds = Math.floor(Date.now() / 1000);
     const postedTimeFromNow =
-      currentTimeInSeconds - Number(currentJob.timestamp)
-    if (postedTimeFromNow < 3600) return 'Just Now'
+      currentTimeInSeconds - Number(currentJob.timestamp);
+    if (postedTimeFromNow < 3600) return "Just Now";
     else if (postedTimeFromNow < 3600 * 24)
-      return Math.floor(postedTimeFromNow / 3600) + ' hours ago'
+      return Math.floor(postedTimeFromNow / 3600) + " hours ago";
     else if (postedTimeFromNow < 3600 * 24 * 30)
-      return Math.floor(postedTimeFromNow / (3600 * 24)) + ' days ago'
+      return Math.floor(postedTimeFromNow / (3600 * 24)) + " days ago";
     else if (postedTimeFromNow < 3600 * 24 * 30 * 12)
-      return Math.floor(postedTimeFromNow / (3600 * 24 * 30)) + ' months ago'
+      return Math.floor(postedTimeFromNow / (3600 * 24 * 30)) + " months ago";
     else
       return (
-        Math.floor(postedTimeFromNow / (3600 * 24 * 30 * 12)) + ' years ago'
-      )
-  }
+        Math.floor(postedTimeFromNow / (3600 * 24 * 30 * 12)) + " years ago"
+      );
+  };
 
-  const userAccount = useAccount()
+  const userAccount = useAccount();
 
-  const { address, isConnected } = userAccount
+  const { address, isConnected } = userAccount;
 
   return (
     <>
@@ -101,8 +86,8 @@ const JobCard: React.FC<JobCardProps> = ({
                 color="primary"
               >
                 {Number(currentJob.applicationCount) > 0
-                  ? Number(currentJob.applicationCount) + ' applications'
-                  : 'First Candiate!'}
+                  ? Number(currentJob.applicationCount) + " applications"
+                  : "First Candiate!"}
               </Chip>
             </div>
             <p className="text-sm">{`Posted ${getTime()}`}</p>
@@ -110,7 +95,7 @@ const JobCard: React.FC<JobCardProps> = ({
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default JobCard
+export default JobCard;

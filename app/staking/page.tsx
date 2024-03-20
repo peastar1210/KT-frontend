@@ -1,55 +1,34 @@
-'use client'
+"use client";
 
-import Navbar from '@/components/Navbar'
-import JobCard from '@/components/JobCard'
-import { FaMapMarkerAlt } from 'react-icons/fa'
-import { FaDesktop } from 'react-icons/fa'
-import { FaSearch } from 'react-icons/fa'
-import { Button, Input, Chip } from '@nextui-org/react'
+import Navbar from "@/components/Navbar";
+import { Button, Input, Chip } from "@nextui-org/react";
 import {
-  type BaseError,
   useWriteContract,
   useAccount,
   useWaitForTransactionReceipt,
-} from 'wagmi'
-import { useState, useEffect } from 'react'
-import { showToast } from '@/helper/ToastNotify'
-import { FaBolt } from 'react-icons/fa6'
-import StakingStatus from '@/components/StakingStatus'
-import JobEvent from '@/components/JobEvent'
-import { abi as MTABI, address as MTAddress } from '@/contracts/MainToken.json'
+} from "wagmi";
+import { useState, useEffect } from "react";
+import { showToast } from "@/helper/ToastNotify";
+import useStakingStatus from "@/hooks/useStakingStatus";
+import { abi as MTABI, address as MTAddress } from "@/contracts/MainToken.json";
 import {
   abi as stakingABI,
   address as stakingAddress,
-} from '@/contracts/StakingRewards.json'
-import { parseEther, formatEther } from 'viem'
-
-type JobType = {
-  id: string
-  title: string
-  description: string
-  qualifications: string
-  location: string
-  salary: string
-  imageURL: string
-  siteURL: string
-  applied: boolean
-}
+} from "@/contracts/StakingRewards.json";
+import { parseEther } from "viem";
 
 export default function Stake() {
-  const userAccount = useAccount()
-  const { total, stake } = StakingStatus()
-  console.log(total, stake)
-  const { address, isConnected } = userAccount
-  const [tokenAmount, setTokenAmount] = useState<string>('')
-  const [withdrawAmount, setWithdrawAmount] = useState<string>('')
+  const userAccount = useAccount();
+  const { total, stake } = useStakingStatus();
+  const [tokenAmount, setTokenAmount] = useState<string>("");
+  const [withdrawAmount, setWithdrawAmount] = useState<string>("");
 
   const {
     data: hashStaking,
     isPending: isPendingStaking,
     error: errorStaking,
     writeContractAsync: writeContractAsyncStaking,
-  } = useWriteContract()
+  } = useWriteContract();
 
   const {
     isLoading: isConfirmingStaking,
@@ -57,13 +36,13 @@ export default function Stake() {
     isError: isFailedStaking,
   } = useWaitForTransactionReceipt({
     hash: hashStaking,
-  })
+  });
   const {
     data: hashStakingTX,
     isPending: isPendingStakingTX,
     error: errorStakingTX,
     writeContractAsync: writeContractAsyncStakingTX,
-  } = useWriteContract()
+  } = useWriteContract();
 
   const {
     isLoading: isConfirmingStakingTX,
@@ -71,57 +50,58 @@ export default function Stake() {
     isError: isFailedStakingTX,
   } = useWaitForTransactionReceipt({
     hash: hashStakingTX,
-  })
+  });
 
   const writeStaking = async () => {
     try {
       const tx = await writeContractAsyncStakingTX({
         abi: stakingABI,
         address: `0x${stakingAddress}`,
-        functionName: 'stake',
+        functionName: "stake",
         args: [parseEther(tokenAmount)],
-      })
-      console.log('tx1:', tx)
-      setTokenAmount('')
+      });
+      console.log("tx1:", tx);
+      setTokenAmount("");
     } catch (err) {
-      console.log('err:', err)
-      setTokenAmount('')
+      console.log("err:", err);
+      setTokenAmount("");
 
-      showToast('error', 'Transaction reverted')
-      return
+      showToast("error", "Transaction reverted");
+      return;
     }
-  }
+  };
 
   useEffect(() => {
-    if (isConfirmedStaking) writeStaking()
-  }, [isConfirmedStaking])
+    if (isConfirmedStaking) writeStaking();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isConfirmedStaking]);
 
   useEffect(() => {
     if (isConfirmedStaking) {
-      showToast('success', 'Transaction Confirmed.')
+      showToast("success", "Transaction Confirmed.");
     }
     if (isFailedStaking) {
-      showToast('error', 'Transaction error.')
+      showToast("error", "Transaction error.");
     }
     if (isConfirmedStakingTX) {
-      showToast('success', 'Token staked successfully.')
+      showToast("success", "Token staked successfully.");
     }
     if (isFailedStakingTX) {
-      showToast('error', 'Token stake error.')
+      showToast("error", "Token stake error.");
     }
   }, [
     isConfirmedStaking,
     isFailedStaking,
     isFailedStakingTX,
     isConfirmedStakingTX,
-  ])
+  ]);
 
   const {
     data: hashWithdraw,
     isPending: isPendingWithdraw,
     error: errorWithdraw,
     writeContractAsync: writeContractAsyncWithdraw,
-  } = useWriteContract()
+  } = useWriteContract();
 
   const {
     isLoading: isConfirmingWithdraw,
@@ -129,55 +109,55 @@ export default function Stake() {
     isError: isFailedWithdraw,
   } = useWaitForTransactionReceipt({
     hash: hashWithdraw,
-  })
+  });
 
   const _stake = async () => {
     try {
       const tx = await writeContractAsyncStaking({
         abi: MTABI,
         address: `0x${MTAddress}`,
-        functionName: 'approve',
+        functionName: "approve",
         args: [`0x${stakingAddress}`, parseEther(tokenAmount)],
-      })
-      console.log('tx1:', tx)
+      });
+      console.log("tx1:", tx);
     } catch (err) {
-      console.log('err:', err)
-      showToast('error', 'Transaction reverted')
-      return
+      console.log("err:", err);
+      showToast("error", "Transaction reverted");
+      return;
     }
-  }
+  };
 
   useEffect(() => {
     if (isConfirmedWithdraw) {
-      showToast('success', 'withdraw successfully')
+      showToast("success", "withdraw successfully");
     }
-  }, [isConfirmedWithdraw])
+  }, [isConfirmedWithdraw]);
 
   const _widthdraw = async () => {
     try {
       const tx = await writeContractAsyncWithdraw({
         abi: stakingABI,
         address: `0x${stakingAddress}`,
-        functionName: 'withdraw',
+        functionName: "withdraw",
         args: [parseEther(withdrawAmount)],
-      })
-      console.log('tx1:', tx)
-      showToast('info', 'Transaction confirming now.')
-      setWithdrawAmount('')
+      });
+      console.log("tx1:", tx);
+      showToast("info", "Transaction confirming now.");
+      setWithdrawAmount("");
     } catch (err) {
-      console.log('err:', err)
-      setWithdrawAmount('')
-      showToast('error', 'Transaction reverted')
-      return
+      console.log("err:", err);
+      setWithdrawAmount("");
+      showToast("error", "Transaction reverted");
+      return;
     }
-  }
+  };
 
   const {
     data: hashReward,
     isPending: isPendingReward,
     error: errorReward,
     writeContractAsync: writeContractAsyncReward,
-  } = useWriteContract()
+  } = useWriteContract();
 
   const {
     isLoading: isConfirmingReward,
@@ -185,27 +165,28 @@ export default function Stake() {
     isError: isFailedReward,
   } = useWaitForTransactionReceipt({
     hash: hashReward,
-  })
+  });
 
   const _reward = async () => {
     try {
       const tx = await writeContractAsyncReward({
         abi: stakingABI,
         address: `0x${stakingAddress}`,
-        functionName: 'getReward',
-      })
-      console.log('tx1:', tx)
+        functionName: "getReward",
+      });
+      console.log("tx1:", tx);
     } catch (err) {
-      console.log('err:', err)
-      showToast('error', 'Transaction reverted')
-      return
+      console.log("err:", err);
+      showToast("error", "Transaction reverted");
+      return;
     }
-  }
+  };
 
   useEffect(() => {
     if (isConfirmedReward)
-      showToast('success', 'Congratulations! You have been rewarded.')
-  }, [isConfirmedWithdraw])
+      showToast("success", "Congratulations! You have been rewarded.");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isConfirmedWithdraw]);
 
   return (
     <div className="relative flex flex-col items-center h-screen">
@@ -287,5 +268,5 @@ export default function Stake() {
         </div>
       </div>
     </div>
-  )
+  );
 }

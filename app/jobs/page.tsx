@@ -26,12 +26,9 @@ import {
   Textarea,
 } from "@nextui-org/react";
 import {
-  type BaseError,
   useWriteContract,
-  useReadContract,
   useAccount,
   useWaitForTransactionReceipt,
-  useSwitchAccount,
 } from "wagmi";
 import { useState, useEffect } from "react";
 
@@ -44,35 +41,17 @@ import { abi as MTABI, address as MTAddress } from "@/contracts/MainToken.json";
 import { showToast } from "@/helper/ToastNotify";
 import { FaBolt } from "react-icons/fa6";
 
-import JobList from "@/components/JobList";
-import JobEvent from "@/components/JobEvent";
-import StakingStatus from "@/components/StakingStatus";
-import JobBoardStatus from "@/components/JobBoardStatus";
+import useJobList from "@/hooks/useJobList";
+import JobEvent from "@/helper/JobEvent";
+import useStakingStatus from "@/hooks/useStakingStatus";
+import useJobBoardStatus from "@/hooks/useJobBoardStatus";
 import ApplicationList from "@/components/ApplicationList";
-
-type JobType = {
-  employer: string;
-  id: string;
-  title: string;
-  description: string;
-  qualifications: string;
-  location: string;
-  salaryFrom: number;
-  salaryTo: number;
-  siteURL: string;
-  applied: boolean;
-  timestamp: number;
-  applicationCount: number;
-};
 
 export default function Jobs() {
   const userAccount = useAccount();
-  const { address, isConnected } = userAccount;
 
-  const { total, stake } = StakingStatus();
-  const { tokenForPosting, tokenForApplying } = JobBoardStatus();
-
-  console.log(tokenForApplying, tokenForPosting);
+  const { stake } = useStakingStatus();
+  const { tokenForPosting, tokenForApplying } = useJobBoardStatus();
 
   const [application, setApplication] = useState<string>("");
   const [salaryApply, setSalaryApply] = useState<number>(0);
@@ -86,7 +65,7 @@ export default function Jobs() {
 
   const {
     data: hashPostingTX,
-    isPending: isPendingPostingTX,
+    // isPending: isPendingPostingTX,
     writeContractAsync: writeContractAsyncPostingTX,
   } = useWriteContract();
   const {
@@ -97,16 +76,14 @@ export default function Jobs() {
 
   const {
     data: hashApplyingTX,
-    isPending: isPendingApplyingTX,
+    // isPending: isPendingApplyingTX,
     writeContractAsync: writeContractAsyncApplyingTX,
   } = useWriteContract();
 
-  const { jobListCount: jobCount, jobList: jobs } = JobList();
-
-  console.log(jobs);
+  const { jobList: jobs } = useJobList();
 
   const {
-    isLoading: isConfirmingPosting,
+    // isLoading: isConfirmingPosting,
     isSuccess: isConfirmedPosting,
     isError: isFailedPosting,
   } = useWaitForTransactionReceipt({
@@ -114,14 +91,14 @@ export default function Jobs() {
   });
 
   const {
-    isLoading: isConfirmingPostingTX,
+    // isLoading: isConfirmingPostingTX,
     isSuccess: isConfirmedPostingTX,
     isError: isFailedPostingTX,
   } = useWaitForTransactionReceipt({
     hash: hashPostingTX,
   });
   const {
-    isLoading: isConfirmingApplying,
+    // isLoading: isConfirmingApplying,
     isSuccess: isConfirmedApplying,
     isError: isFailedApplying,
   } = useWaitForTransactionReceipt({
@@ -129,7 +106,7 @@ export default function Jobs() {
   });
 
   const {
-    isLoading: isConfirmingApplyingTX,
+    // isLoading: isConfirmingApplyingTX,
     isSuccess: isConfirmedApplyingTX,
     isError: isFailedApplyingTX,
   } = useWaitForTransactionReceipt({
@@ -181,7 +158,6 @@ export default function Jobs() {
   useEffect(() => {
     console.log("job selected");
     setIsOnSearch(false);
-    console.log(isOnSearch);
   }, [selectedJob]);
 
   useEffect(() => {
@@ -191,6 +167,7 @@ export default function Jobs() {
       if (selectedJob.id !== "") console.log("Job selected!");
       else setSelectedJob(jobs[0]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [jobs]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -248,6 +225,7 @@ export default function Jobs() {
   };
   useEffect(() => {
     if (isConfirmedPosting) writePostJob();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConfirmedPosting]);
 
   const writeApplyingJob = async () => {
@@ -268,6 +246,7 @@ export default function Jobs() {
   };
   useEffect(() => {
     if (isConfirmedApplying) writeApplyingJob();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConfirmedApplying]);
 
   const applyJob = () => {
@@ -617,7 +596,9 @@ export default function Jobs() {
                     label="Hourly salary Rate"
                     labelPlacement="outside"
                     variant="underlined"
-                    onChange={(event) => setSalaryApply(event.target.value)}
+                    onChange={(event) =>
+                      setSalaryApply(parseInt(event.target.value))
+                    }
                     placeholder="Ex: $50"
                   />
                   <Input
