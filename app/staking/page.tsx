@@ -1,13 +1,13 @@
 "use client";
 
-import Navbar from "@/components/Navbar";
-import { Button, Input, Chip } from "@nextui-org/react";
-import {
-  useWriteContract,
-  useAccount,
-  useWaitForTransactionReceipt,
-} from "wagmi";
 import { useState, useEffect } from "react";
+import { Button, Input, Chip } from "@nextui-org/react";
+import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
+
+import TokenDetails from "@/components/TokenDetails";
+import Navbar from "@/components/Navbar";
+import { parseEther } from "viem";
+
 import { showToast } from "@/helper/ToastNotify";
 import useStakingStatus from "@/hooks/useStakingStatus";
 import { abi as MTABI, address as MTAddress } from "@/contracts/MainToken.json";
@@ -15,10 +15,8 @@ import {
   abi as stakingABI,
   address as stakingAddress,
 } from "@/contracts/StakingRewards.json";
-import { parseEther } from "viem";
 
 export default function Stake() {
-  const userAccount = useAccount();
   const { total, stake } = useStakingStatus();
   const [tokenAmount, setTokenAmount] = useState<string>("");
   const [withdrawAmount, setWithdrawAmount] = useState<string>("");
@@ -26,12 +24,12 @@ export default function Stake() {
   const {
     data: hashStaking,
     isPending: isPendingStaking,
-    error: errorStaking,
+    // error: errorStaking,
     writeContractAsync: writeContractAsyncStaking,
   } = useWriteContract();
 
   const {
-    isLoading: isConfirmingStaking,
+    // isLoading: isConfirmingStaking,
     isSuccess: isConfirmedStaking,
     isError: isFailedStaking,
   } = useWaitForTransactionReceipt({
@@ -39,13 +37,13 @@ export default function Stake() {
   });
   const {
     data: hashStakingTX,
-    isPending: isPendingStakingTX,
-    error: errorStakingTX,
+    // isPending: isPendingStakingTX,
+    // error: errorStakingTX,
     writeContractAsync: writeContractAsyncStakingTX,
   } = useWriteContract();
 
   const {
-    isLoading: isConfirmingStakingTX,
+    // isLoading: isConfirmingStakingTX,
     isSuccess: isConfirmedStakingTX,
     isError: isFailedStakingTX,
   } = useWaitForTransactionReceipt({
@@ -99,14 +97,14 @@ export default function Stake() {
   const {
     data: hashWithdraw,
     isPending: isPendingWithdraw,
-    error: errorWithdraw,
+    // error: errorWithdraw,
     writeContractAsync: writeContractAsyncWithdraw,
   } = useWriteContract();
 
   const {
-    isLoading: isConfirmingWithdraw,
+    // isLoading: isConfirmingWithdraw,
     isSuccess: isConfirmedWithdraw,
-    isError: isFailedWithdraw,
+    // isError: isFailedWithdraw,
   } = useWaitForTransactionReceipt({
     hash: hashWithdraw,
   });
@@ -155,14 +153,14 @@ export default function Stake() {
   const {
     data: hashReward,
     isPending: isPendingReward,
-    error: errorReward,
+    // error: errorReward,
     writeContractAsync: writeContractAsyncReward,
   } = useWriteContract();
 
   const {
-    isLoading: isConfirmingReward,
+    // isLoading: isConfirmingReward,
     isSuccess: isConfirmedReward,
-    isError: isFailedReward,
+    // isError: isFailedReward,
   } = useWaitForTransactionReceipt({
     hash: hashReward,
   });
@@ -198,6 +196,7 @@ export default function Stake() {
               Staking
             </div>
             <div className="w-2/3 flex flex-col gap-8">
+              <TokenDetails />
               <div className=" bg-yellow-50 border-1 border-yellow-100 flex flex-col shadow-lg rounded-2xl px-16 py-8 gap-4">
                 <div className="grid grid-cols-12">
                   <div className="col-span-4">Total Staked:</div>
