@@ -1,12 +1,11 @@
-import { useReadContract, useAccount } from "wagmi";
-import { ReadContractErrorType } from "wagmi/actions";
-import { formatEther } from "viem";
-import { address, abi } from "@/contracts/MainToken.json";
 import { memo } from "react";
 import { Link } from "@nextui-org/react";
+import { useReadContract, useAccount } from "wagmi";
+import { ReadContractErrorType } from "wagmi/actions";
 
-const TokenStatus = async () => {
-  const userAccount = useAccount();
+import { address, abi } from "@/contracts/MainToken.json";
+
+const TokenDetails = async () => {
   const {
     data: tokenName,
     error,
@@ -30,10 +29,15 @@ const TokenStatus = async () => {
     <>
       <div className="flex">
         <b>{tokenName?.toString()}&nbsp;:&nbsp;</b>
-        <Link target="_blank" href={`https://mumbai.polygonscan.com/address/0x${address}`}>0x{address}</Link>
+        <Link
+          target="_blank"
+          href={`https://mumbai.polygonscan.com/address/0x${address}`}
+        >
+          0x{address}
+        </Link>
       </div>
     </>
   );
 };
 
-export default memo(TokenStatus);
+export default memo(TokenDetails);
