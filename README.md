@@ -47,6 +47,10 @@ yarn dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-### License
+## How to use this platform
+
+Please [this document](https://docs.google.com/document/d/1oiihMpYUmygxO5tXI-F03tW7ocg6xrnegjsIMF4znxYh)
+
+## License
 
 Distributed under the MIT License. See `LICENSE` for more information.
