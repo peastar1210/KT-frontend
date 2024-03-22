@@ -49,7 +49,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## How to use this platform
 
-Please [this document](https://docs.google.com/document/d/1oiihMpYUmygxO5tXI-F03tW7ocg6xrnegjsIMF4znxYh)
+Please read [this document](https://docs.google.com/document/d/1oiihMpYUmygxO5tXI-F03tW7ocg6xrnegjsIMF4znxY)
 
 ## License
 
